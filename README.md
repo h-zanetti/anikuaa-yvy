@@ -1,6 +1,4 @@
-# anikuaa-yvy
-
-Hello World!
+# Anikuaa Yvy
 
 This is the project of my first RPG, all written in python.
 Its idea is to practice my code having fun and to introduce the art of coding to my little brother;
