@@ -140,36 +140,65 @@ def check_menu(command, out_put):
         else:
             out_put
 
+# HAVE TO BE FIXED!
 def get_item(cpu, choice):
-    if choice == "get items":
-      inventory.update(cpu["items"])
-    elif choice == "get %s" % (choice.split()[1]):
-      inventory.update({choice.split()[1] : cpu["items"][choice.split()[1]]})
+    command = choice.split(' ')
+    if command[0] == "get":
+        if command[1] == "items":
+            inventory.update(cpu["items"])
+            cpu["items"] = {}
+            print "You got all items."
+        elif command[0] == "get" and command[1] != "items":
+            while len(cpu["items"]) > 0:
+                if command[1] in cpu["items"]:
+                    inventory.update({command[1].lower() : cpu["items"][command[1].lower()]})
+                    cpu["items"].pop(choice.split(' ')[1])
+                    print "%s's items:" % (cpu["name"])
+                    for item in cpu["items"]:
+                        if cpu["items"][item][0] == 3:
+                            print "%s - level %s" % (cpu["items"][item][2], cpu["items"][item][3])
+                        else:
+                            print "%s - %sx" % (cpu["items"][item][2], cpu["items"][item][1])
+                else: 
+                    print "unable to find '%s'" % (command[1])
+                    choice = raw_input("Try again, or type 'stop searching' to move on: ")
+                    command = choice.split(' ')
+                    if command[0] == "stop":
+                        break
     else:
-      return choice
+        return choice
 
 def search(cpu):
-    choice = raw_input()
-    check_command(choice, lvl_up())
-    if choice.lower() == "search %s" % (cpu["name"].lower()):
-        if len(cpu["items"]) == 0:
-            print ("You didn't find anything")
-        else:
-            print "Items found:"
-            for item in cpu["items"]:
-                if cpu["items"][item][0] == 3:
-                    print "%s - level %s" % (cpu["items"][item][2], cpu["items"][item][3])
+    command = raw_input()
+    check_command(command, lvl_up())
+    choice = command.split(' ')
+
+    if choice[0].lower() == "search": 
+        while len(cpu["items"]) > 0:
+            if choice[1].lower() == cpu["name"].lower():
+                print "Items found:"
+                for item in cpu["items"]:
+                    if cpu["items"][item][0] == 3:
+                        print "%s - level %s" % (cpu["items"][item][2], cpu["items"][item][3])
+                    else:
+                        print "%s - %sx" % (cpu["items"][item][2], cpu["items"][item][1])
+                if player["kills"] == 1:
+                    print "To get a specific item just type 'get item'."
+                    print "You can also type 'get items' to put all of them in your inventory."
+                    choice = raw_input()
+                    get_item(cpu, choice)
+                    check_command(choice, lvl_up())
                 else:
-                    print "%s - %sx" % (cpu["items"][item][2], cpu["items"][item][1])
-        if player["kills"] == 1:
-            print "To get a specific item just type 'get item'."
-            print "You can also type 'get items' to put all of them in your inventory."
-        choice = raw_input()
-        check_command(choice, lvl_up())
-        get_item(cpu, choice)
-    if player["kills"] == 1:
-        print "All this commands are available for you any time."
-        print "You can drop an item on the same way you got it if you want or have to."
+                    command = raw_input()
+                    get_item(cpu, command)
+                    check_command(command, lvl_up())
+        else:
+            print ("Its inventory is empty.")
+            if player["kills"] == 1:
+                print "All this commands are available for you any time."
+                print "You can drop an item on the same way you got it if you want or have to."
+    else:
+        return choice
 
 def use_item(command):
     first = command.split()[0].lower()
@@ -298,7 +327,6 @@ def lvl_up():
         else:
             message = "To improve an attribute first type 'improve att', then you can type its name or its first three letters. Type 'help' if you need it."
             check_menu(choice.lower(), message)
-            return choice
 
 # Getting in a fight
 def fight(cpu, lvl, dice):
@@ -391,7 +419,7 @@ while choice != "go north" and choice != "go south" and choice != "go west" and 
         print "What do you do?"
         break
     else:
-        "This command is invalid right now, try to explore the junggle going to a direction or, if you need, type 'help'."
+        print "This command is invalid right now, try to explore the junggle going to a direction or, if you need, type 'help'."
 
 # North Path
 if choice.lower() == "go north":
@@ -418,7 +446,7 @@ if choice.lower() == "go north":
         check_command(command, lvl_up())
         use_item(command)
 
-    print "It is becoming dark, you can see the light of a fire coming from North and hear the sound of water coming from South."
+    print "Now, it is becoming dark; you can see the light of a fire coming from North and hear the sound of water coming from South."
     print "What do you do?"
     choice = raw_input()
     check_command(choice, lvl_up())
