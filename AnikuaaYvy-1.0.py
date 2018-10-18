@@ -429,13 +429,13 @@ if choice.lower() == "go north":
     if clss["INT"] >= 7:
         print "Looking around you found some familiar plants and created a health potion."
         inventory.update({ "potion" : [1, 1, "Health Potion", 1] })
-        if clss["INT"] >= 20:               # Defining level of potion
+        if clss["INT"] >= 20:               # Intelligence defines the level of potion
             inventory["potion"][3] = 3
         elif 10 <= clss["INT"] < 20:
             inventory["potion"][3] = 2
         else:
             inventory["potion"][3] = 1
-        if clss["DEX"] >= 20:               # Defining how many potions the player can make
+        if clss["DEX"] >= 20:               # Dexterity defines how many potions the player can make
             inventory["potion"][1] = 3
         elif 10 <= clss["DEX"] < 20:
             inventory["potion"][1] = 2
